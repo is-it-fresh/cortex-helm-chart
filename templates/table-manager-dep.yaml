@@ -1,0 +1,49 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "fullname" . }}-table-manager
+  labels:
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    cortex: table-manager
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ template "name" . }}-table-manager
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "name" . }}-table-manager
+        release: {{ .Release.Name }}
+        cortex: table-manager
+    {{- with .Values.tablemanager.podAnnotations }}
+      annotations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    spec:
+      tolerations:
+{{ toYaml .Values.tablemanager.tolerations | indent 8 }}
+      affinity:
+{{ toYaml .Values.tablemanager.affinity | indent 8 }}
+      containers:
+      - name: table-manager
+        image: "{{ .Values.tablemanager.image.repository }}:{{ .Values.tablemanager.image.tag }}"
+        imagePullPolicy: IfNotPresent
+        args:
+        - -target=table-manager
+        - -server.http-listen-port=80
+        - -cassandra.addresses={{ .Values.cassandra.hosts }}
+        - -cassandra.keyspace={{ .Values.cassandra.keyspace }}
+        {{- if .Values.tablemanager.retention.deletesEnabled }}
+        - -table-manager.retention-deletes-enabled={{ .Values.tablemanager.retention.deletesEnabled }}
+        - -table-manager.retention-period={{ .Values.tablemanager.retention.period }}
+        {{- end }}
+        ports:
+        - containerPort: 80
+          name: http
+        resources:
+{{ toYaml .Values.tablemanager.resources | indent 10 }}

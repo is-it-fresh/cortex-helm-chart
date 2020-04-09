@@ -1,0 +1,54 @@
+---
+{{- if .Values.ruler.enabled -}}
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "fullname" . }}-ruler
+  labels:
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    cortex: ruler
+spec:
+  replicas: {{ .Values.ruler.replicas }}
+  selector:
+    matchLabels:
+      app: {{ template "name" . }}-ruler
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "name" . }}-ruler
+        release: {{ .Release.Name }}
+        cortex: ruler
+    {{- with .Values.ruler.podAnnotations }}
+      annotations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    spec:
+      tolerations:
+{{ toYaml .Values.ruler.tolerations | indent 8 }}
+      affinity:
+{{ toYaml .Values.ruler.affinity | indent 8 }}
+      containers:
+      - name: ruler
+        image: "{{ .Values.ruler.image.repository }}:{{ .Values.ruler.image.tag }}"
+        imagePullPolicy: IfNotPresent
+        args:
+        - -target=ruler
+        - -log.level=debug
+        - -server.http-listen-port=80
+        - -ruler.num-workers={{ .Values.ruler.workers }}
+        - -ruler.configs.url=http://{{ template "fullname" . }}-configs.{{ .Release.Namespace }}.svc.cluster.local:80
+        - -ruler.alertmanager-url=http://{{ template "fullname" . }}-alertmanager.{{ .Release.Namespace }}.svc.cluster.local/api/prom/alertmanager/
+        - -ruler.ring.consul.host={{ template "fullname" . }}-consul.{{ .Release.Namespace }}.svc.cluster.local:8500
+        - -cassandra.addresses={{ .Values.cassandra.hosts }}
+        - -cassandra.keyspace={{ .Values.cassandra.keyspace }}
+{{ include "cortex.tableargs" . | indent 8 }}
+{{ include "cortex.memcachedArgs" . | indent 8 }}
+        ports:
+        - containerPort: 80
+          name: http
+        resources:
+{{ toYaml .Values.ruler.resources | indent 10 }}
+{{- end }}

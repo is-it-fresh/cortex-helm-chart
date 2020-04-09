@@ -1,0 +1,55 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: {{ template "fullname" . }}-querier
+  labels:
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    cortex: querier
+spec:
+  replicas: {{ .Values.querier.replicas }}
+  strategy:
+    rollingUpdate:
+      maxUnavailable: 1
+  selector:
+    matchLabels:
+      app: {{ template "name" . }}-querier
+      release: {{ .Release.Name }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "name" . }}-querier
+        release: {{ .Release.Name }}
+        cortex: querier
+    {{- with .Values.querier.podAnnotations }}
+      annotations:
+{{ toYaml . | indent 8 }}
+    {{- end }}
+    spec:
+      tolerations:
+{{ toYaml .Values.querier.tolerations | indent 8 }}
+      affinity:
+{{ toYaml .Values.querier.affinity | indent 8 }}
+      containers:
+      - name: querier
+        image: "{{ .Values.querier.image.repository }}:{{ .Values.querier.image.tag }}"
+        imagePullPolicy: IfNotPresent
+        args:
+        - -target=querier
+        - -server.http-listen-port=80
+        # - -querier.frontend-address={{ template "fullname" . }}-query-frontend.{{ .Release.Namespace }}.svc.cluster.local:9095
+        - -querier.query-ingesters-within={{ .Values.querier.queryIngestersWithin }}
+        - -cassandra.addresses={{ .Values.cassandra.hosts }}
+        - -cassandra.keyspace={{ .Values.cassandra.keyspace }}
+{{ include "cortex.memcachedArgs" . | indent 8 }}
+{{ include "cortex.storeIndexMemcachedArgs" . | indent 8 }}
+        - -querier.batch-iterators
+        - -querier.ingester-streaming
+        - -querier.max-concurrent={{ .Values.querier.maxConcurrent }}
+        ports:
+        - containerPort: 80
+          name: http
+        resources:
+{{ toYaml .Values.querier.resources | indent 10 }}

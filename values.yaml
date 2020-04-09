@@ -1,0 +1,446 @@
+replicationFactor: 3
+
+alertmanager:
+  enabled: true
+  image:
+    repository: quay.io/cortexproject/cortex
+    tag: v1.0.0
+  replicas: 1
+  podAnnotations:
+    sidecar.istio.io/inject: "false"
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "80"
+  tolerations:
+    - key: "dedicated"
+      operator: "Equal"
+      value: "cortex"
+      effect: "NoSchedule"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: dedicated
+                operator: In
+                values:
+                  - cortex
+  resources:
+    requests:
+      memory: 1Gi
+      cpu: 2
+    limits:
+      cpu: 2
+
+configsdb:
+  enabled: true
+  image:
+    repository: postgres
+    tag: 9.6
+  podAnnotations:
+    prometheus.io.scrape: "false"
+    sidecar.istio.io/inject: "false"
+  tolerations:
+    - key: "dedicated"
+      operator: "Equal"
+      value: "cortex"
+      effect: "NoSchedule"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: dedicated
+                operator: In
+                values:
+                  - cortex
+  resources:
+    requests:
+      memory: 1Gi
+      cpu: 250m
+    limits:
+      cpu: 250m
+
+configs:
+  enabled: true
+  image:
+    repository: quay.io/cortexproject/cortex
+    tag: v1.0.0
+  replicas: 3
+  podAnnotations:
+    sidecar.istio.io/inject: "false"
+  tolerations:
+    - key: "dedicated"
+      operator: "Equal"
+      value: "cortex"
+      effect: "NoSchedule"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: dedicated
+                operator: In
+                values:
+                  - cortex
+  resources:
+    requests:
+      memory: 128Mi
+      cpu: 250m
+    limits:
+      cpu: 250m
+
+consul:
+  image:
+    repository: consul
+    tag: 1.0.7
+  podAnnotations:
+    sidecar.istio.io/inject: "false"
+  tolerations:
+    - key: "dedicated"
+      operator: "Equal"
+      value: "cortex"
+      effect: "NoSchedule"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: dedicated
+                operator: In
+                values:
+                  - cortex
+  resources:
+    requests:
+      memory: 512Mi
+      cpu: 1
+    limits:
+      cpu: 1
+
+distributor:
+  replicas: 1
+  image:
+    repository: quay.io/cortexproject/cortex
+    tag: v1.0.0
+  podAnnotations:
+    sidecar.istio.io/inject: "false"
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "80"
+  tolerations:
+    - key: "dedicated"
+      operator: "Equal"
+      value: "cortex"
+      effect: "NoSchedule"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: dedicated
+                operator: In
+                values:
+                  - cortex
+  resources:
+    requests:
+      memory: 4Gi
+      cpu: 2
+    limits:
+      cpu: 2
+
+ingester:
+  replicas: 3
+  image:
+    repository: quay.io/cortexproject/cortex
+    tag: v1.0.0
+  podAnnotations:
+    sidecar.istio.io/inject: "false"
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "80"
+  tolerations:
+    - key: "dedicated"
+      operator: "Equal"
+      value: "cortex"
+      effect: "NoSchedule"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: dedicated
+                operator: In
+                values:
+                  - cortex
+  resources:
+    requests:
+      memory: 4Gi
+      cpu: 2
+    limits:
+      cpu: 2
+
+# chunk caching
+memcached:
+  replicaCount: 1
+  pdbMinAvailable: 1
+  enabled: true
+  memcached:
+    maxItemMemory: 3840
+    threads: 32
+  resources:
+    requests:
+      memory: 4Gi
+      cpu: 500m
+    limit:
+      cpu: 500m
+  metrics:
+    enabled: true
+  tolerations:
+    - key: "dedicated"
+      operator: "Equal"
+      value: "cortex-memcached"
+      effect: "NoSchedule"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: dedicated
+                operator: In
+                values:
+                  - cortex-memcached
+
+# index read caching
+memcached-index-read:
+  replicaCount: 1
+  pdbMinAvailable: 1
+  enabled: true
+  image: memcached:1.5.7-alpine
+  memcached:
+    maxItemMemory: 3840
+    maxItemSize: 32m
+    threads: 32
+  resources:
+    requests:
+      memory: 4Gi
+      cpu: 500m
+    limit:
+      cpu: 500m
+  metrics:
+    enabled: true
+  tolerations:
+    - key: "dedicated"
+      operator: "Equal"
+      value: "cortex-memcached"
+      effect: "NoSchedule"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: dedicated
+                operator: In
+                values:
+                  - cortex-memcached
+
+# index write caching
+memcached-index-write:
+  replicaCount: 1
+  pdbMinAvailable: 1
+  enabled: true
+  image: memcached:1.5.7-alpine
+  memcached:
+    maxItemMemory: 3840
+    maxItemSize: 32m
+    threads: 32
+  resources:
+    requests:
+      memory: 4Gi
+      cpu: 500m
+    limit:
+      cpu: 500m
+  metrics:
+    enabled: true
+  tolerations:
+    - key: "dedicated"
+      operator: "Equal"
+      value: "cortex-memcached"
+      effect: "NoSchedule"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: dedicated
+                operator: In
+                values:
+                  - cortex-memcached
+
+querier:
+  replicas: 1
+  image:
+    repository: quay.io/cortexproject/cortex
+    tag: v1.0.0
+  podAnnotations:
+    sidecar.istio.io/inject: "false"
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "80"
+  queryIngestersWithin: 0
+  tolerations:
+    - key: "dedicated"
+      operator: "Equal"
+      value: "cortex"
+      effect: "NoSchedule"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: dedicated
+                operator: In
+                values:
+                  - cortex
+  resources:
+    requests:
+      memory: 1Gi
+      cpu: 1
+    limits:
+      cpu: 1
+
+retrieval:
+  enabled: true
+  image:
+    repository: prom/prometheus
+    tag: v1.4.1
+  podAnnotations:
+    sidecar.istio.io/inject: "false"
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "80"
+  tolerations:
+    - key: "dedicated"
+      operator: "Equal"
+      value: "cortex"
+      effect: "NoSchedule"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: dedicated
+                operator: In
+                values:
+                  - cortex
+
+ruler:
+  enabled: true
+  image:
+    repository: quay.io/cortexproject/cortex
+    tag: v1.0.0
+  replicas: 1
+  podAnnotations:
+    sidecar.istio.io/inject: "false"
+  workers: 4
+  tolerations:
+    - key: "dedicated"
+      operator: "Equal"
+      value: "cortex"
+      effect: "NoSchedule"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: dedicated
+                operator: In
+                values:
+                  - cortex
+  resources:
+    requests:
+      memory: 1Gi
+      cpu: 1
+    limits:
+      cpu: 1
+
+tablemanager:
+  image:
+    repository: quay.io/cortexproject/cortex
+    tag: v1.0.0
+  podAnnotations:
+    sidecar.istio.io/inject: "false"
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "80"
+  tolerations:
+    - key: "dedicated"
+      operator: "Equal"
+      value: "cortex"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: dedicated
+                operator: In
+                values:
+                  - cortex
+  resources:
+    requests:
+      memory: 256Mi
+      cpu: 200m
+    limits:
+      cpu: 200m
+  retention:
+    deletesEnabled: false
+    period: 1080h
+
+nginx:
+  enabled: true
+  podAnnotations:
+    prometheus.io.scrape: "false"
+  tolerations:
+    - key: "dedicated"
+      operator: "Equal"
+      value: "cortex"
+      effect: "NoSchedule"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: dedicated
+                operator: In
+                values:
+                  - cortex
+
+queryFrontend:
+  # Do not increase until https://github.com/cortexproject/cortex/issues/1150
+  # is resolved.
+  replicas: 2
+  image:
+    repository: quay.io/cortexproject/cortex
+    tag: v1.0.0
+  podAnnotations:
+    sidecar.istio.io/inject: "false"
+    prometheus.io/scrape: "true"
+    prometheus.io/port: "80"
+  tolerations:
+    - key: "dedicated"
+      operator: "Equal"
+      value: "cortex"
+      effect: "NoSchedule"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: dedicated
+                operator: In
+                values:
+                  - cortex
+  resources:
+    requests:
+      memory: 1Gi
+      cpu: 1
+    limits:
+      cpu: 1
+
+cassandra:
+  # Comma seperated List
+  hosts: 127.0.0.1
+  keyspace: cortex

@@ -1,0 +1,15 @@
+Info about this release:
+Release Name = {{ .Release.Name }}
+Release Namespace = {{ .Release.Namespace }}
+
+List all the things:
+  kubectl -n {{ .Release.Namespace }} get po,svc,cm -o wide
+
+Verify cortex is installed correctly by port-forwarding to nginx Pod
+  kubectl -n {{ .Release.Namespace }} port-forward $(kubectl -n {{ .Release.Namespace }} get pods -l "cortex=nginx" -o jsonpath='{.items[0].metadata.name}') 8080:80
+
+and visiting the Prometheus API:
+
+http://127.0.0.1:8080/api/prom/api/v1/query?query=up
+
+which should list all the metrics "retrieval" is currently collecting.
