@@ -1,6 +1,7 @@
 # Introduction
 
-Repository for a slightly changed version of the [Cortex](https://github.com/cortexproject/cortex) Helm chart. [Original Repo](https://github.com/cortexproject/cortex-helm-chart/)
+Repository for a slightly changed version of the [Cortex](https://github.com/cortexproject/cortex) Helm chart [Original Repo](https://github.com/cortexproject/cortex-helm-chart/).
+
 Follow the instructions below to install/upgrade Cortex in your Kubernetes cluster
 after cloning this repository.
 
