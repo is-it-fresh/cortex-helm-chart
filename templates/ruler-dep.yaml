@@ -44,7 +44,6 @@ spec:
         - -ruler.ring.consul.host={{ template "fullname" . }}-consul.{{ .Release.Namespace }}.svc.cluster.local:8500
         - -cassandra.addresses={{ .Values.cassandra.hosts }}
         - -cassandra.keyspace={{ .Values.cassandra.keyspace }}
-{{ include "cortex.tableargs" . | indent 8 }}
 {{ include "cortex.memcachedArgs" . | indent 8 }}
         ports:
         - containerPort: 80
