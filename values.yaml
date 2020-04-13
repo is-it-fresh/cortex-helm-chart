@@ -275,6 +275,7 @@ memcached-index-write:
 
 querier:
   replicas: 1
+  maxConcurrent: 50
   image:
     repository: quay.io/cortexproject/cortex
     tag: v1.0.0

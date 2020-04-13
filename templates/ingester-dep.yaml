@@ -63,10 +63,14 @@ spec:
         - -consul.hostname={{ template "fullname" . }}-consul.{{ .Release.Namespace }}.svc.cluster.local:8500
         - -cassandra.addresses={{ .Values.cassandra.hosts }}
         - -cassandra.keyspace={{ .Values.cassandra.keyspace }}
+        - -schema-config-file=/schema/schema.yaml
 {{ include "cortex.storeIndexMemcachedArgs" . | indent 8 }}
         ports:
         - containerPort: 80
           name: http
+        volumeMounts:
+          - name: config-volume
+            mountPath: /schema
         readinessProbe:
           httpGet:
             path: /ready
@@ -75,3 +79,7 @@ spec:
           timeoutSeconds: 1
         resources:
 {{ toYaml .Values.ingester.resources | indent 10 }}
+      volumes:
+        - name: config-volume
+          configMap:
+            name: {{ template "fullname" . }}-schema
