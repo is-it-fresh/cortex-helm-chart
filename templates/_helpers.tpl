@@ -15,15 +15,8 @@ We truncate at 63 chars because some Kubernetes name fields are limited to this 
 {{- printf "%s-%s" .Release.Name $name | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
-{{/* Pre-calculate name used in memcached subchart */}}
-{{- define "cortex.memcachedArgs" -}}
-- -memcached.hostname={{ .Release.Name }}-memcached.{{ .Release.Namespace }}.svc.cluster.local
-- -memcached.timeout=100ms
-- -memcached.service=memcache # Service port name
-- -memcached.timeout=500ms
-{{- end -}}
-
 {{- define "cortex.storeIndexMemcachedArgs" -}}
+- -store.index-cache-write.cache.enable-fifocache=true
 - -store.index-cache-write.memcached.hostname={{ .Release.Name }}-memcached-index-write.{{ .Release.Namespace }}.svc.cluster.local
 - -store.index-cache-write.memcached.service=memcache # Service port name
 - -store.index-cache-write.memcached.timeout=500ms

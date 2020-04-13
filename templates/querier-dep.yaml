@@ -43,7 +43,6 @@ spec:
         - -querier.query-ingesters-within={{ .Values.querier.queryIngestersWithin }}
         - -cassandra.addresses={{ .Values.cassandra.hosts }}
         - -cassandra.keyspace={{ .Values.cassandra.keyspace }}
-{{ include "cortex.memcachedArgs" . | indent 8 }}
 {{ include "cortex.storeIndexMemcachedArgs" . | indent 8 }}
         - -querier.batch-iterators
         - -querier.ingester-streaming

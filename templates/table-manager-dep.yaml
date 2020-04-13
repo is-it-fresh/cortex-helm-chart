@@ -41,8 +41,8 @@ spec:
         {{- if .Values.tablemanager.retention.deletesEnabled }}
         - -table-manager.retention-deletes-enabled={{ .Values.tablemanager.retention.deletesEnabled }}
         - -table-manager.retention-period={{ .Values.tablemanager.retention.period }}
-        - -schema-config-file=/schema/schema.yaml
         {{- end }}
+        - -schema-config-file=/schema/schema.yaml
         volumeMounts:
           - name: config-volume
             mountPath: /schema
