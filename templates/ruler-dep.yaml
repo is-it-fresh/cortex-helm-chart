@@ -26,6 +26,11 @@ spec:
 {{ toYaml . | indent 8 }}
     {{- end }}
     spec:
+      selector:
+        matchLabels:
+          app: {{ template "name" . }}-ruler
+          release: {{ .Release.Name }}
+          cortex: ruler
       tolerations:
 {{ toYaml .Values.ruler.tolerations | indent 8 }}
       affinity:

@@ -26,6 +26,11 @@ spec:
 {{ toYaml . | indent 8 }}
     {{- end }}
     spec:
+      selector:
+        matchLabels:
+          app: {{ template "name" . }}-alertmanager
+          release: {{ .Release.Name }}
+          cortex: alertmanager
       tolerations:
 {{ toYaml .Values.alertmanager.tolerations | indent 8 }}
       affinity:

@@ -22,6 +22,10 @@ spec:
 {{ toYaml . | indent 8 }}
     {{- end }}
     spec:
+      selector:
+        matchLabels:
+          name: nginx
+          cortex: nginx
       tolerations:
 {{ toYaml .Values.nginx.tolerations | indent 8 }}
       affinity:

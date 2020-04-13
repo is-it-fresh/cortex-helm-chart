@@ -26,6 +26,11 @@ spec:
 {{ toYaml . | indent 8 }}
     {{- end }}
     spec:
+      selector:
+        matchLabels:
+          app: {{ template "name" . }}-configs-db
+          release: {{ .Release.Name }}
+          cortex: configs-db
       tolerations:
 {{ toYaml .Values.configsdb.tolerations | indent 8 }}
       affinity:

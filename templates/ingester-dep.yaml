@@ -42,6 +42,11 @@ spec:
 {{ toYaml . | indent 8 }}
     {{- end }}
     spec:
+      selector:
+        matchLabels:
+          app: {{ template "name" . }}-ingester
+          release: {{ .Release.Name }}
+          cortex: ingester
       # Give ingesters 80 minutes grace to flush chunks and exit cleanly.
       # Service is available during this time, as long as we don't stop
       # too many ingesters at once.

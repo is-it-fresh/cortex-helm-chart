@@ -22,6 +22,12 @@ spec:
 {{ toYaml . | indent 8 }}
 {{- end }}
     spec:
+      selector:
+        matchLabels:
+          app: {{ template "memcached.fullname" . }}
+          chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
+          release: "{{ .Release.Name }}"
+          heritage: "{{ .Release.Service }}"
       affinity:
         podAntiAffinity:
         {{- if eq .Values.AntiAffinity "hard" }}

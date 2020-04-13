@@ -20,6 +20,11 @@ spec:
 {{ toYaml . | indent 8 }}
     {{- end }}
     spec:
+      selector:
+        matchLabels:
+          app: {{ template "name" . }}-query-frontend
+          release: {{ .Release.Name }}
+          cortex: query-frontend
       tolerations:
 {{ toYaml .Values.queryFrontend.tolerations | indent 8 }}
       affinity:

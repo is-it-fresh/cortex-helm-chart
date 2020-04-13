@@ -25,6 +25,11 @@ spec:
 {{ toYaml . | indent 8 }}
     {{- end }}
     spec:
+      selector:
+        matchLabels:
+          app: {{ template "name" . }}-table-manager
+          release: {{ .Release.Name }}
+          cortex: table-manager
       tolerations:
 {{ toYaml .Values.tablemanager.tolerations | indent 8 }}
       affinity:
