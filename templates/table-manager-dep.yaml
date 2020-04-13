@@ -43,10 +43,10 @@ spec:
         - -table-manager.retention-period={{ .Values.tablemanager.retention.period }}
         - -schema-config-file=/schema/schema.yaml
         {{- end }}
-        ports:
         volumeMounts:
           - name: config-volume
             mountPath: /schema
+        ports:
         - containerPort: 80
           name: http
         resources:
