@@ -9,6 +9,10 @@ metadata:
     cortex: query-frontend
 spec:
   replicas: {{ .Values.queryFrontend.replicas }}
+  selector:
+    matchLabels:
+      app: {{ template "name" . }}-query-frontend
+      release: {{ .Release.Name }}
   template:
     metadata:
       labels:
@@ -20,11 +24,6 @@ spec:
 {{ toYaml . | indent 8 }}
     {{- end }}
     spec:
-      selector:
-        matchLabels:
-          app: {{ template "name" . }}-query-frontend
-          release: {{ .Release.Name }}
-          cortex: query-frontend
       tolerations:
 {{ toYaml .Values.queryFrontend.tolerations | indent 8 }}
       affinity:

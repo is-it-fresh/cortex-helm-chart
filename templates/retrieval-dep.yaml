@@ -26,11 +26,6 @@ spec:
 {{ toYaml . | indent 8 }}
     {{- end }}
     spec:
-      selector:
-        matchLabels:
-          app: {{ template "name" . }}-retrieval
-          release: {{ .Release.Name }}
-          cortex: retrieval
       serviceAccountName: {{ template "fullname" . }}-retrieval-sa
       tolerations:
 {{ toYaml .Values.retrieval.tolerations | indent 8 }}

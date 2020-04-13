@@ -28,11 +28,6 @@ spec:
 {{ toYaml . | indent 8 }}
     {{- end }}
     spec:
-      selector:
-        matchLabels:
-          app: {{ template "name" . }}-distributor
-          release: {{ .Release.Name }}
-          cortex: distributor
       tolerations:
 {{ toYaml .Values.distributor.tolerations | indent 8 }}
       affinity:

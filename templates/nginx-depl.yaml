@@ -12,6 +12,10 @@ metadata:
     cortex: nginx
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      name: nginx
+      cortex: nginx
   template:
     metadata:
       labels:
@@ -22,10 +26,6 @@ spec:
 {{ toYaml . | indent 8 }}
     {{- end }}
     spec:
-      selector:
-        matchLabels:
-          name: nginx
-          cortex: nginx
       tolerations:
 {{ toYaml .Values.nginx.tolerations | indent 8 }}
       affinity:

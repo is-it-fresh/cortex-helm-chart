@@ -28,11 +28,6 @@ spec:
 {{ toYaml . | indent 8 }}
     {{- end }}
     spec:
-      selector:
-        matchLabels:
-          app: {{ template "name" . }}-querier
-          release: {{ .Release.Name }}
-          cortex: querier
       tolerations:
 {{ toYaml .Values.querier.tolerations | indent 8 }}
       affinity:

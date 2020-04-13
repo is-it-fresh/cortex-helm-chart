@@ -10,6 +10,10 @@ metadata:
 spec:
   serviceName: {{ template "memcached.fullname" . }}
   replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ template "memcached.fullname" . }}
+      release: "{{ .Release.Name }}"
   template:
     metadata:
       labels:
@@ -22,12 +26,6 @@ spec:
 {{ toYaml . | indent 8 }}
 {{- end }}
     spec:
-      selector:
-        matchLabels:
-          app: {{ template "memcached.fullname" . }}
-          chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-          release: "{{ .Release.Name }}"
-          heritage: "{{ .Release.Service }}"
       affinity:
         podAntiAffinity:
         {{- if eq .Values.AntiAffinity "hard" }}
