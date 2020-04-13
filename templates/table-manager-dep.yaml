@@ -41,9 +41,17 @@ spec:
         {{- if .Values.tablemanager.retention.deletesEnabled }}
         - -table-manager.retention-deletes-enabled={{ .Values.tablemanager.retention.deletesEnabled }}
         - -table-manager.retention-period={{ .Values.tablemanager.retention.period }}
+        - -schema-config-file=/schema/schema.yaml
         {{- end }}
         ports:
+        volumeMounts:
+          - name: config-volume
+            mountPath: /schema
         - containerPort: 80
           name: http
         resources:
 {{ toYaml .Values.tablemanager.resources | indent 10 }}
+      volumes:
+        - name: config-volume
+          configMap:
+            name: {{ template "fullname" . }}-schema

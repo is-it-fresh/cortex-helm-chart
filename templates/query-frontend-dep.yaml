@@ -36,6 +36,7 @@ spec:
         - -log.level=debug
         - -server.http-listen-port=80
         - -server.grpc-listen-port=9095
+        - -schema-config-file=/schema/schema.yaml
         ports:
         - containerPort: 9095
           name: grpc
@@ -43,3 +44,7 @@ spec:
           name: http
         resources:
 {{ toYaml .Values.queryFrontend.resources | indent 10 }}
+      volumes:
+        - name: config-volume
+          configMap:
+            name: {{ template "fullname" . }}-schema

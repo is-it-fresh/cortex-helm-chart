@@ -1,0 +1,24 @@
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ template "fullname" . }}-schema
+  labels:
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    app: {{ template "name" . }}-schema
+    cortex: schema
+data:
+  schema.yaml: |-
+    configs:
+      - from: "2020-01-01"
+        schema: v9
+        index:
+          period: 1w 
+          prefix: cortex_index_
+        chunks:
+          period: 1w 
+          prefix: cortex_chunks
+        store: cassandra
+        object_store: cassandra

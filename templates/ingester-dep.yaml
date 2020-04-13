@@ -59,10 +59,9 @@ spec:
         args:
         - -target=ingester
         - -ingester.join-after=30s
-        - -ingester.claim-on-rollout=true
         - -ingester.search-pending-for=5m
         - -distributor.replication-factor={{ .Values.replicationFactor }}
-        - -consul.host={{ template "fullname" . }}-consul.{{ .Release.Namespace }}.svc.cluster.local:8500
+        - -consul.hostname={{ template "fullname" . }}-consul.{{ .Release.Namespace }}.svc.cluster.local:8500
         - -cassandra.addresses={{ .Values.cassandra.hosts }}
         - -cassandra.keyspace={{ .Values.cassandra.keyspace }}
 {{ include "cortex.memcachedArgs" . | indent 8 }}

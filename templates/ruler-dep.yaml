@@ -41,7 +41,7 @@ spec:
         - -ruler.num-workers={{ .Values.ruler.workers }}
         - -ruler.configs.url=http://{{ template "fullname" . }}-configs.{{ .Release.Namespace }}.svc.cluster.local:80
         - -ruler.alertmanager-url=http://{{ template "fullname" . }}-alertmanager.{{ .Release.Namespace }}.svc.cluster.local/api/prom/alertmanager/
-        - -ruler.ring.consul.host={{ template "fullname" . }}-consul.{{ .Release.Namespace }}.svc.cluster.local:8500
+        - -ruler.ring.consul.hostname={{ template "fullname" . }}-consul.{{ .Release.Namespace }}.svc.cluster.local:8500
         - -cassandra.addresses={{ .Values.cassandra.hosts }}
         - -cassandra.keyspace={{ .Values.cassandra.keyspace }}
 {{ include "cortex.memcachedArgs" . | indent 8 }}

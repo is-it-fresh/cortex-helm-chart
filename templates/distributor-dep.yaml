@@ -40,7 +40,7 @@ spec:
         - -target=distributor
         - -log.level=debug
         - -server.http-listen-port=80
-        - -distributor.ring.consul.host={{ template "fullname" . }}-consul.{{ .Release.Namespace }}.svc.cluster.local:8500
+        - -distributor.ring.consul.hostname={{ template "fullname" . }}-consul.{{ .Release.Namespace }}.svc.cluster.local:8500
         - -distributor.replication-factor={{ .Values.replicationFactor }}
         - -cassandra.addresses={{ .Values.cassandra.hosts }}
         - -cassandra.keyspace={{ .Values.cassandra.keyspace }}
