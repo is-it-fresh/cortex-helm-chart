@@ -41,6 +41,7 @@ spec:
         - -server.http-listen-port=80
         # - -querier.frontend-address={{ template "fullname" . }}-query-frontend.{{ .Release.Namespace }}.svc.cluster.local:9095
         - -querier.query-ingesters-within={{ .Values.querier.queryIngestersWithin }}
+        - -consul.hostname={{ template "fullname" . }}-consul.{{ .Release.Namespace }}.svc.cluster.local:8500
         - -cassandra.addresses={{ .Values.cassandra.hosts }}
         - -cassandra.keyspace={{ .Values.cassandra.keyspace }}
 {{ include "cortex.storeIndexMemcachedArgs" . | indent 8 }}
