@@ -47,8 +47,16 @@ spec:
         - -querier.batch-iterators
         - -querier.ingester-streaming
         - -querier.max-concurrent={{ .Values.querier.maxConcurrent }}
+        - -schema-config-file=/schema/schema.yaml
         ports:
         - containerPort: 80
           name: http
+        volumeMounts:
+          - name: config-volume
+            mountPath: /schema
         resources:
 {{ toYaml .Values.querier.resources | indent 10 }}
+      volumes:
+        - name: config-volume
+          configMap:
+            name: {{ template "fullname" . }}-schema
