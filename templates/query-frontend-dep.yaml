@@ -36,6 +36,8 @@ spec:
         - -log.level=debug
         - -server.http-listen-port=80
         - -server.grpc-listen-port=9095
+        - -cassandra.addresses={{ .Values.cassandra.hosts }}
+        - -cassandra.keyspace={{ .Values.cassandra.keyspace }}
         - -schema-config-file=/schema/schema.yaml
         ports:
         - containerPort: 9095
