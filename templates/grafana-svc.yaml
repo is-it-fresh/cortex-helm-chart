@@ -17,5 +17,6 @@ spec:
     port: 3000
     nodePort: 30081
   selector:
-    name: grafana
+    app: {{ template "name" . }}-grafana
+    release: {{ .Release.Name }}
 {{- end }}
