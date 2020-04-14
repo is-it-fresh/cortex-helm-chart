@@ -31,6 +31,36 @@ alertmanager:
     limits:
       cpu: 2
 
+grafana:
+  enabled: true
+  image:
+    repository: grafana/grafana
+    tag: latest
+  podAnnotations:
+    sidecar.istio.io/inject: "false"
+    prometheus.io/scrape: "false"
+  tolerations:
+    - key: "dedicated"
+      operator: "Equal"
+      value: "cortex"
+      effect: "NoSchedule"
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: dedicated
+                operator: In
+                values:
+                  - cortex
+  resources:
+    limits:
+      memory: "2Gi"
+      cpu: "1000m"
+    requests:
+      memory: "1Gi"
+      cpu: "500m"
+
 configsdb:
   enabled: true
   image:

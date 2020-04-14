@@ -1,0 +1,27 @@
+---
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: {{ template "fullname" . }}-grafana
+  labels:
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    app: {{ template "name" . }}-grafana
+    cortex: grafana
+data:
+  prometheus.yaml: |-
+    {
+        "apiVersion": 1,
+        "datasources": [
+            {
+               "access":"proxy",
+                "editable": true,
+                "name": "cortex",
+                "orgId": 1,
+                "type": "prometheus",
+                "url": "http://{{ template "fullname" . }}-nginx.{{ .Release.Namespace }}.svc.cluster.local:80/api/prom",
+                "version": 1
+            }
+        ]
+    }
