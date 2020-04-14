@@ -1,22 +1,21 @@
 ---
-  {{- if .Values.grafana.enabled -}}
-  apiVersion: v1
-  kind: Service
-  metadata:
-    name: {{ template "fullname" . }}-grafana
-    labels:
-      chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
-      release: {{ .Release.Name }}
-      heritage: {{ .Release.Service }}
-      app: {{ template "name" . }}-grafana
-      cortex: grafana
-  spec:
-    type: NodePort
-    ports:
-    - name: http
-      port: 3000
-      nodePort: 30081
-    selector:
-      name: grafana
-  {{- end }}
-  
+{{- if .Values.grafana.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ template "fullname" . }}-grafana
+  labels:
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    app: {{ template "name" . }}-grafana
+    cortex: grafana
+spec:
+  type: NodePort
+  ports:
+  - name: http
+    port: 3000
+    nodePort: 30081
+  selector:
+    name: grafana
+{{- end }}
